@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react';
-import { useFormik } from 'formik';
+import {useFormik} from 'formik';
 import * as yup from 'yup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -8,10 +8,9 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import { useLazyQuery } from '@apollo/client';
-import { LOGIN } from '../../../../gql/login';
 import toast from 'react-hot-toast';
-import Router, { useRouter } from 'next/router';
+import Router, {useRouter} from 'next/router';
+import {usersApi} from '../../../../api';
 
 const validationSchema = yup.object({
   account: yup
@@ -27,25 +26,22 @@ const validationSchema = yup.object({
 
 const Form = (): JSX.Element => {
   const router = useRouter();
-  const [handleLogin] = useLazyQuery(LOGIN);
   const initialValues = {
     account: '',
     password: '',
   };
 
-  const onSubmit = async (values) => {
-    const { data } = await handleLogin({
-      variables: {
-        ...values,
-      },
+  const onSubmit = async (values): Promise<void> => {
+    const {code, message, body} = await usersApi.login({
+      ...values,
     });
-    if (data.login.code === 100) {
-      window.localStorage.setItem('accessToken', data.login.body.token);
+    if (code === 100) {
+      window.localStorage.setItem('accessToken', body.token);
       window.localStorage.setItem('account', values.account);
       const returnUrl = (router.query.returnUrl as string | undefined) || '/';
       Router.push(returnUrl);
     } else {
-      toast.error(data.login.message);
+      toast.error(message);
     }
   };
 
@@ -66,7 +62,7 @@ const Form = (): JSX.Element => {
           gutterBottom
           color={'text.secondary'}
         >
-          Sign In
+						Sign In
         </Typography>
         <Typography
           variant="h4"
@@ -74,17 +70,17 @@ const Form = (): JSX.Element => {
             fontWeight: 700,
           }}
         >
-          Welcome back
+						Welcome back
         </Typography>
         <Typography color="text.secondary">
-          Sign in to manage your account.
+						Sign in to manage your account.
         </Typography>
       </Box>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <Typography variant={'subtitle2'} sx={{ marginBottom: 2 }}>
-              Enter your account
+            <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
+								Enter your account
             </Typography>
             <TextField
               label="Account *"
@@ -101,15 +97,15 @@ const Form = (): JSX.Element => {
           <Grid item xs={12}>
             <Box
               display="flex"
-              flexDirection={{ xs: 'column', sm: 'row' }}
-              alignItems={{ xs: 'stretched', sm: 'center' }}
+              flexDirection={{xs: 'column', sm: 'row'}}
+              alignItems={{xs: 'stretched', sm: 'center'}}
               justifyContent={'space-between'}
               width={1}
               marginBottom={2}
             >
-              <Box marginBottom={{ xs: 1, sm: 0 }}>
+              <Box marginBottom={{xs: 1, sm: 0}}>
                 <Typography variant={'subtitle2'}>
-                  Enter your password
+										Enter your password
                 </Typography>
               </Box>
               <Typography variant={'subtitle2'}>
@@ -119,7 +115,7 @@ const Form = (): JSX.Element => {
                   href={'/password-reset'}
                   underline={'none'}
                 >
-                  Forgot your password?
+										Forgot your password?
                 </Link>
               </Typography>
             </Box>
@@ -139,28 +135,28 @@ const Form = (): JSX.Element => {
           <Grid item container xs={12}>
             <Box
               display="flex"
-              flexDirection={{ xs: 'column', sm: 'row' }}
-              alignItems={{ xs: 'stretched', sm: 'center' }}
+              flexDirection={{xs: 'column', sm: 'row'}}
+              alignItems={{xs: 'stretched', sm: 'center'}}
               justifyContent={'space-between'}
               width={1}
               maxWidth={600}
               margin={'0 auto'}
             >
-              <Box marginBottom={{ xs: 1, sm: 0 }}>
+              <Box marginBottom={{xs: 1, sm: 0}}>
                 <Typography variant={'subtitle2'}>
-                  Don't have an account yet?{' '}
+										Don't have an account yet?{' '}
                   <Link
                     component={'a'}
                     color={'primary'}
                     href={'/signup'}
                     underline={'none'}
                   >
-                    Sign up here.
+											Sign up here.
                   </Link>
                 </Typography>
               </Box>
               <Button size={'large'} variant={'contained'} type={'submit'}>
-                Sign In
+									Sign In
               </Button>
             </Box>
           </Grid>

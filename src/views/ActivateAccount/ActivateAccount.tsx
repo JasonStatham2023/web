@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -7,9 +7,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Main from 'layouts/Main';
 import Container from 'components/Container';
 import Typography from '@mui/material/Typography';
-import {useMutation} from '@apollo/client';
-import {ACTIVATE_ACCOUNT} from '../../gql/activateAccount';
 import {useRouter} from 'next/router';
+import {usersApi} from '../../api';
 
 const ActivateAccount = (): JSX.Element => {
   const theme = useTheme();
@@ -18,20 +17,16 @@ const ActivateAccount = (): JSX.Element => {
     defaultMatches: true,
   });
 
-
-  const [handleActivateAccount, {data}] = useMutation(ACTIVATE_ACCOUNT);
-
+  const [response, setResponse] = useState({code: 0, message: ''});
+  const handleActivateAccount = useCallback(async (): Promise<void> => {
+    if (typeof email === 'string' && typeof authCode === 'string') {
+      const result = await usersApi.activateAccount({email, authCode});
+      setResponse(result);
+    }
+  }, [authCode, email]);
 
   useEffect(() => {
-    if (email && authCode) {
-      handleActivateAccount({
-        variables: {
-          email,
-          authCode
-        }
-      });
-    }
-
+    handleActivateAccount().then();
   }, [authCode, email, handleActivateAccount]);
 
   return (
@@ -64,7 +59,7 @@ const ActivateAccount = (): JSX.Element => {
                     gutterBottom
                     color={'text.secondary'}
                   >
-                    activate account
+                                        activate account
                   </Typography>
                   <Typography
                     variant="h4"
@@ -74,8 +69,8 @@ const ActivateAccount = (): JSX.Element => {
                     }}
                   >
                     {
-                      data?.activateAccount.code === 100 ? 'Account activation is successful!' +
-                        ' Log in now!' : data?.activateAccount.message
+                      response?.code === 100 ? 'Account activation is successful!' +
+                                                ' Log in now!' : response?.message
                     }
                   </Typography>
                 </Box>
@@ -93,9 +88,9 @@ const ActivateAccount = (): JSX.Element => {
                     height={1}
                     sx={{
                       filter:
-                        theme.palette.mode === 'dark'
-                          ? 'brightness(0.8)'
-                          : 'none',
+                                                theme.palette.mode === 'dark'
+                                                  ? 'brightness(0.8)'
+                                                  : 'none',
                     }}
                   />
                 </Box>

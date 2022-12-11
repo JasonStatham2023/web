@@ -8,10 +8,9 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import {useMutation} from '@apollo/client';
 import toast from 'react-hot-toast';
-import {RESET_PASSWORD} from '../../../../gql/resetPassword';
 import {useRouter} from 'next/router';
+import {usersApi} from '../../../../api';
 
 const validationSchema = yup.object({
   password: yup
@@ -21,7 +20,6 @@ const validationSchema = yup.object({
 });
 
 const ResetPasswordForm = (): JSX.Element => {
-  const [handleResetPassword] = useMutation(RESET_PASSWORD);
   const {query: {email, authCode}} = useRouter();
 
 
@@ -29,19 +27,17 @@ const ResetPasswordForm = (): JSX.Element => {
     password: '',
   };
 
-  const onSubmit = async (values) => {
-    const {data} = await handleResetPassword({
-      variables: {
-        authCode,
-        email,
-        ...values
-      }
+  const onSubmit = async (values): Promise<void> => {
+    const {code, message} = await usersApi.resetPassword({
+      authCode,
+      email,
+      ...values
     });
 
-    if (data.resetPassword.code === 100) {
+    if (code === 100) {
       toast.success('Password reset successful!');
     } else {
-      toast.error(data.resetPassword.message);
+      toast.error(message);
     }
 
     return values;
@@ -64,7 +60,7 @@ const ResetPasswordForm = (): JSX.Element => {
           gutterBottom
           color={'text.secondary'}
         >
-          Reset Password
+						Reset Password
         </Typography>
         <Typography
           variant="h4"
@@ -72,17 +68,17 @@ const ResetPasswordForm = (): JSX.Element => {
             fontWeight: 700,
           }}
         >
-          Forgot your password?
+						Forgot your password?
         </Typography>
         <Typography color="text.secondary">
-          Enter your new password below and we'll get you back on track.
+						Enter your new password below and we'll get you back on track.
         </Typography>
       </Box>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
-              Enter your password
+								Enter your password
             </Typography>
             <TextField
               label="Password *"
@@ -114,11 +110,11 @@ const ResetPasswordForm = (): JSX.Element => {
                   href={'/signin'}
                   fullWidth
                 >
-                  Back to sign in
+										Back to sign in
                 </Button>
               </Box>
               <Button size={'large'} variant={'contained'} type={'submit'}>
-                Confirm reset
+									Confirm reset
               </Button>
             </Box>
           </Grid>

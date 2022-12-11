@@ -9,14 +9,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import 'react-image-lightbox/style.css';
 import 'aos/dist/aos.css';
-import {
-  ApolloClient,
-  ApolloLink,
-  ApolloProvider,
-  createHttpLink,
-  DefaultOptions,
-  InMemoryCache
-} from '@apollo/client';
+import {ApolloClient, ApolloLink, ApolloProvider, createHttpLink, DefaultOptions, InMemoryCache} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
 import {Toaster} from 'react-hot-toast';
@@ -69,7 +62,7 @@ const client = new ApolloClient({
 export default function App({Component, pageProps}): JSX.Element {
   return (
     <ApolloProvider client={client}>
-      <Toaster position="top-center" />
+      <Toaster position="top-center"/>
       <React.Fragment>
         <Head>
           <meta

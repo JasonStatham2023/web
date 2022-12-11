@@ -51,7 +51,8 @@ module.exports = {
       'error',
       'only-multiline',
     ],
+    '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
+    '@typescript-eslint/explicit-function-return-type': 'error',
     'react-hooks/exhaustive-deps': 'error',
-    '@typescript-eslint/ban-ts-comment': 'off',
   },
 };

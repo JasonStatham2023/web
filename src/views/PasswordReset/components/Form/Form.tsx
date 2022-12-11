@@ -8,9 +8,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import {useMutation} from '@apollo/client';
-import {SEND_PASSWORD_RESET_EMAIL} from '../../../../gql/sendPasswordResetEmail';
 import toast from 'react-hot-toast';
+import {usersApi} from '../../../../api';
 
 const validationSchema = yup.object({
   email: yup
@@ -21,24 +20,21 @@ const validationSchema = yup.object({
 });
 
 const Form = (): JSX.Element => {
-  const [handleSeedResetPasswordEmail] = useMutation(SEND_PASSWORD_RESET_EMAIL);
 
 
   const initialValues = {
     email: '',
   };
 
-  const onSubmit = async (values) => {
-    const {data} = await handleSeedResetPasswordEmail({
-      variables: {
-        ...values
-      }
+  const onSubmit = async (values): Promise<void> => {
+    const {code, message} = await usersApi.sendPasswordResetEmail({
+      ...values
     });
 
-    if (data.sendPasswordResetEmail.code === 100) {
+    if (code === 100) {
       toast.success('The password reset link has been sent to your email!');
     } else {
-      toast.error(data.sendPasswordResetEmail.message);
+      toast.error(message);
     }
 
     return values;
@@ -61,7 +57,7 @@ const Form = (): JSX.Element => {
           gutterBottom
           color={'text.secondary'}
         >
-          Recover account
+						Recover account
         </Typography>
         <Typography
           variant="h4"
@@ -69,17 +65,17 @@ const Form = (): JSX.Element => {
             fontWeight: 700,
           }}
         >
-          Forgot your password?
+						Forgot your password?
         </Typography>
         <Typography color="text.secondary">
-          Enter your email address below and we'll get you back on track.
+						Enter your email address below and we'll get you back on track.
         </Typography>
       </Box>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={4}>
           <Grid item xs={12}>
             <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
-              Enter your email
+								Enter your email
             </Typography>
             <TextField
               label="Email *"
@@ -111,11 +107,11 @@ const Form = (): JSX.Element => {
                   href={'/signin'}
                   fullWidth
                 >
-                  Back to sign in
+										Back to sign in
                 </Button>
               </Box>
               <Button size={'large'} variant={'contained'} type={'submit'}>
-                Send reset link
+									Send reset link
               </Button>
             </Box>
           </Grid>

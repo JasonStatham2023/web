@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useFormik } from 'formik';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useFormik} from 'formik';
 import * as yup from 'yup';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -7,17 +7,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import { useMutation } from '@apollo/client';
-import Router, { useRouter } from 'next/router';
-import { REGISTER } from '../../../../gql/register';
+import Router, {useRouter} from 'next/router';
 import toast from 'react-hot-toast';
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from '@mui/material';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
+import {usersApi} from '../../../../api';
 
 const validationSchema = yup.object({
   inviteCode: yup
@@ -45,9 +38,8 @@ let lastValues = null;
 
 const Form = (): JSX.Element => {
   const [open, setOpen] = useState(false);
-  const [handleRegister] = useMutation(REGISTER);
   const {
-    query: { inviteCode },
+    query: {inviteCode},
   } = useRouter();
 
   const initialValues = {
@@ -57,17 +49,16 @@ const Form = (): JSX.Element => {
     inviteCode: '',
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = async (values): Promise<any> => {
     lastValues = values;
-    const { data } = await handleRegister({
-      variables: { ...values },
+    const {code, message} = await usersApi.register({
+      ...values,
     });
-    if (data.register.code === 100) {
+    if (code === 100) {
       setOpen(true);
     } else {
-      toast.error(data.register.message);
+      toast.error(message);
     }
-
     return values;
   };
 
@@ -81,7 +72,7 @@ const Form = (): JSX.Element => {
     if (inviteCode) {
       formik.setFieldValue('inviteCode', inviteCode);
     }
-  }, [inviteCode, formik.setFieldValue]);
+  }, [inviteCode, formik.setFieldValue, formik]);
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -93,18 +84,16 @@ const Form = (): JSX.Element => {
 
   const handleRegisterClick = useCallback(async () => {
     if (lastValues) {
-      const { data } = await handleRegister({
-        variables: {
-          ...lastValues,
-        },
+      const {code, message} = await usersApi.register({
+        ...lastValues,
       });
-      if (data.register.code === 100) {
+      if (code === 100) {
         toast.success('Resend successfully!');
       } else {
-        toast.error(data.register.message);
+        toast.error(message);
       }
     }
-  }, [handleRegister]);
+  }, []);
 
   return (
     <Box>
@@ -113,8 +102,8 @@ const Form = (): JSX.Element => {
         onClose={handleClose}
         aria-labelledby="draggable-dialog-title"
       >
-        <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-          registration success
+        <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title">
+                    registration success
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -123,10 +112,10 @@ const Form = (): JSX.Element => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleOk} color="primary">
-            sign in
+                        sign in
           </Button>
           <Button onClick={handleRegisterClick} color="primary">
-            resend mail
+                        resend mail
           </Button>
         </DialogActions>
       </Dialog>
@@ -140,7 +129,7 @@ const Form = (): JSX.Element => {
           gutterBottom
           color={'text.secondary'}
         >
-          Signup
+                    Signup
         </Typography>
         <Typography
           variant="h4"
@@ -148,17 +137,17 @@ const Form = (): JSX.Element => {
             fontWeight: 700,
           }}
         >
-          Create an account
+                    Create an account
         </Typography>
         <Typography color="text.secondary">
-          Fill out the form to get started.
+                    Fill out the form to get started.
         </Typography>
       </Box>
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <Typography variant={'subtitle2'} sx={{ marginBottom: 2 }}>
-              Enter your account
+            <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
+                            Enter your account
             </Typography>
             <TextField
               label="Account *"
@@ -174,8 +163,8 @@ const Form = (): JSX.Element => {
           </Grid>
 
           <Grid item xs={12}>
-            <Typography variant={'subtitle2'} sx={{ marginBottom: 2 }}>
-              Enter your email
+            <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
+                            Enter your email
             </Typography>
             <TextField
               label="Email *"
@@ -190,8 +179,8 @@ const Form = (): JSX.Element => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography variant={'subtitle2'} sx={{ marginBottom: 2 }}>
-              Enter your password
+            <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
+                            Enter your password
             </Typography>
             <TextField
               label="Password *"
@@ -207,8 +196,8 @@ const Form = (): JSX.Element => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography variant={'subtitle2'} sx={{ marginBottom: 2 }}>
-              Enter your invite code
+            <Typography variant={'subtitle2'} sx={{marginBottom: 2}}>
+                            Enter your invite code
             </Typography>
             <TextField
               // InputLabelProps={{shrink: !!inviteCode}}
@@ -228,29 +217,29 @@ const Form = (): JSX.Element => {
           <Grid item container xs={12}>
             <Box
               display="flex"
-              flexDirection={{ xs: 'column', sm: 'row' }}
-              alignItems={{ xs: 'stretched', sm: 'center' }}
+              flexDirection={{xs: 'column', sm: 'row'}}
+              alignItems={{xs: 'stretched', sm: 'center'}}
               justifyContent={'space-between'}
               width={1}
               maxWidth={600}
               margin={'0 auto'}
             >
-              <Box marginBottom={{ xs: 1, sm: 0 }}>
+              <Box marginBottom={{xs: 1, sm: 0}}>
                 <Typography variant={'subtitle2'}>
-                  Already have an account?{' '}
+                                    Already have an account?{' '}
                   <Link
                     component={'a'}
                     color={'primary'}
                     href={'/signin'}
                     underline={'none'}
                   >
-                    Sign in
+                                        Sign in
                   </Link>
-                  .
+                                    .
                 </Typography>
               </Box>
               <Button size={'large'} variant={'contained'} type={'submit'}>
-                Sign up
+                                Sign up
               </Button>
             </Box>
           </Grid>
@@ -267,14 +256,14 @@ const Form = (): JSX.Element => {
               align={'center'}
             >
               {/* eslint-disable-next-line react/no-unescaped-entities */}
-              By clicking "Sign up" button you agree with our{' '}
+                            By clicking "Sign up" button you agree with our{' '}
               <Link
                 component={'a'}
                 color={'primary'}
                 href={'/company-terms'}
                 underline={'none'}
               >
-                company terms and conditions.
+                                company terms and conditions.
               </Link>
             </Typography>
           </Grid>

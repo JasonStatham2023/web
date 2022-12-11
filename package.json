@@ -43,7 +43,7 @@
     "@mui/icons-material": "^5.2.4",
     "@mui/material": "^5.2.4",
     "aos": "^2.3.4",
-    "axios": "^0.27.2",
+    "axios": "^1.2.1",
     "card-validator": "^8.1.1",
     "clipboard": "^2.0.11",
     "formik": "^2.2.6",
