@@ -33,7 +33,7 @@ module.exports = {
     'indent': [
       'error',
       2,
-      { 'SwitchCase': 1 },
+      {'SwitchCase': 1},
     ],
     'linebreak-style': [
       'error',
@@ -51,7 +51,8 @@ module.exports = {
       'error',
       'only-multiline',
     ],
-    '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
+    'no-mixed-spaces-and-tabs': 'off',
+    '@typescript-eslint/ban-ts-comment': ['error', {'ts-ignore': 'allow-with-description'}],
     '@typescript-eslint/explicit-function-return-type': 'error',
     'react-hooks/exhaustive-deps': 'error',
   },

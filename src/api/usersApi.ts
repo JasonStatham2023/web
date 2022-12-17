@@ -44,6 +44,10 @@ class UsersApi {
       password
     });
   }
+
+  userinfo(): Promise<CustomResponse<any>> {
+    return request.get('/users/userinfo');
+  }
 }
 
 export const usersApi = new UsersApi();

@@ -7,21 +7,23 @@ import Container from 'components/Container';
 import {CompanyIntroduction, Stories} from './components';
 import Application from './components/Application';
 import Hero from './components/Hero';
+import MobileLayout from '../../components/CustomTabs';
 
 const Home = (): JSX.Element => {
   const theme = useTheme();
   return (
     <Main>
-      <Hero />
+      <Hero/>
+      <MobileLayout/>
       <Box>
         <Container>
-          <Stories />
+          <Stories/>
         </Container>
         <Container>
-          <CompanyIntroduction />
+          <CompanyIntroduction/>
         </Container>
         <Container>
-          <Application />
+          <Application/>
         </Container>
       </Box>
     </Main>

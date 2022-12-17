@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
@@ -6,16 +6,22 @@ import Typography from '@mui/material/Typography';
 
 import Page from '../components/Page';
 import Main from 'layouts/Main';
-import {useQuery} from '@apollo/client';
-import {USERINFO} from '../../../gql/userinfo';
 import {Userinfo} from '../../../types/userinfo';
 import Button from '@mui/material/Button';
+import {usersApi} from '../../../api';
 
 const Info = (): JSX.Element => {
-  const {data} = useQuery(USERINFO);
-  const userinfo: Userinfo = data?.userinfo || {};
-
-  const handleLogoutClick = () => {
+  const [userinfo, setUserinfo] = useState<Userinfo | null>(null);
+  useEffect(() => {
+    const getUserinfo = async (): Promise<void> => {
+      const {code, body} = await usersApi.userinfo();
+      if (code === 100) {
+        setUserinfo(body);
+      }
+    };
+    getUserinfo().then();
+  }, []);
+  const handleLogoutClick = (): void => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('account');
     window.location.href = '/signin';
@@ -31,53 +37,53 @@ const Info = (): JSX.Element => {
             alignItems={{xs: 'flex-start', md: 'center'}}
           >
             <Typography variant="h6" fontWeight={700}>
-              account information
+								account information
             </Typography>
           </Box>
           <Box paddingY={4}>
-            <Divider />
+            <Divider/>
           </Box>
           <form>
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">
-                  Available Balance：${userinfo.balance}
+										Available Balance：${userinfo?.balance}
                 </Typography>
                 <Typography variant="caption">available balance</Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">
-                  Winning amount:${userinfo.accountFrozen}
+										Winning amount:${userinfo?.accountFrozen}
                 </Typography>
                 <Typography variant="caption">winning amount</Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">
-                  Withdrawal balance:${userinfo.withdrawalAmount}
+										Withdrawal balance:${userinfo?.withdrawalAmount}
                 </Typography>
                 <Typography variant="caption">
-                  After initiating a withdrawal, the available balance will
-                  become the withdrawal balance!
+										After initiating a withdrawal, the available balance will
+										become the withdrawal balance!
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">
-                  Total assets:$
-                  {(userinfo.balance +
-                    userinfo.withdrawalAmount +
-                    userinfo.accountFrozen)?.toFixed(2) || 0}
+										Total assets:$
+                  {(+userinfo?.balance +
+												+userinfo?.withdrawalAmount +
+												+userinfo?.accountFrozen).toFixed(2) || 0}
                 </Typography>
                 <Typography variant="caption">
-                  Total assets consist of available balance, winning amount, and
-                  withdrawal balance!
+										Total assets consist of available balance, winning amount, and
+										withdrawal balance!
                 </Typography>
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6">
-                  Number of gold coins:{userinfo.gold}
+										Number of gold coins:{userinfo?.gold}
                 </Typography>
                 <Typography variant="caption">
-                  Win 10 times and you will get this gold coin
+										Win 10 times and you will get this gold coin
                 </Typography>
               </Grid>
             </Grid>
@@ -88,7 +94,7 @@ const Info = (): JSX.Element => {
             sx={{marginTop: 3}}
             onClick={handleLogoutClick}
           >
-            Sign out
+							Sign out
           </Button>
         </Box>
       </Page>
